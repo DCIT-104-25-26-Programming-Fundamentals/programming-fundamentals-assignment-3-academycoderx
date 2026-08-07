@@ -81,7 +81,127 @@
 //
 
 // =============================================================================
-// YOUR CODE BELOW — remove the // symbols from the scaffold and fill it in
+const readlineSync = require('readline-sync');
+
+let students = [];
+
+function calculateAverage(scores) {
+    if (scores.length === 0) return 0;
+    let sum = 0;
+    for (let i = 0; i < scores.length; i++) {
+        sum += scores[i];
+    }
+    return sum / scores.length;
+}
+
+function displayMenu() {
+    console.log("\n==============================");
+    console.log("    STUDENT RECORD SYSTEM MENU ");
+    console.log("==============================");
+    console.log("1. Add student");
+    console.log("2. Display all students");
+    console.log("3. Calculate average score");
+    console.log("4. Quit");
+}
+
+function addStudent() {
+    const name = readlineSync.question("Student name: ");
+    if (name.trim() === "") {
+        console.log("Error: Student name cannot be empty.");
+        return;
+    }
+
+    const id = readlineSync.questionInt("Student ID: ");
+    const scoreCount = readlineSync.questionInt("How many scores? ");
+    
+    if (scoreCount < 0) {
+        console.log("Error: Number of scores cannot be negative.");
+        return;
+    }
+
+    let scores = [];
+    for (let i = 0; i < scoreCount; i++) {
+        const score = readlineSync.questionInt(`Enter score ${i + 1}: `);
+        scores.push(score);
+    }
+
+    const student = {
+        name: name,
+        id: id,
+        scores: scores
+    };
+    
+    students.push(student);
+    console.log(`Student "${name}" added successfully.`);
+}
+
+function displayAllStudents() {
+    if (students.length === 0) {
+        console.log("No students have been added yet.");
+        return;
+    }
+
+    console.log("\nAll Student Records:");
+    for (let i = 0; i < students.length; i++) {
+        const s = students[i];
+        const avg = calculateAverage(s.scores);
+        console.log(`Name: ${s.name} | ID: ${s.id} | Scores: [${s.scores.join(", ")}] | Avg: ${avg.toFixed(2)}`);
+    }
+}
+
+function displayAverageScore() {
+    if (students.length === 0) {
+        console.log("No student records available to search.");
+        return;
+    }
+
+    const targetId = readlineSync.questionInt("Enter student ID: ");
+    let foundStudent = null;
+
+    for (let i = 0; i < students.length; i++) {
+        if (students[i].id === targetId) {
+            foundStudent = students[i];
+            break;
+        }
+    }
+
+    if (foundStudent === null) {
+        console.log(`Error: Student with ID ${targetId} not found.`);
+        return;
+    }
+
+    const average = calculateAverage(foundStudent.scores);
+    console.log(`${foundStudent.name}'s average score: ${average.toFixed(2)}`);
+}
+
+function main() {
+    let running = true;
+
+    while (running) {
+        displayMenu();
+        const choice = readlineSync.questionInt("Enter your choice (1-4): ");
+
+        switch (choice) {
+            case 1:
+                addStudent();
+                break;
+            case 2:
+                displayAllStudents();
+                break;
+            case 3:
+                displayAverageScore();
+                break;
+            case 4:
+                console.log("Goodbye!");
+                running = false;
+                break;
+            default:
+                console.log("Error: Invalid choice. Please select a number between 1 and 4.");
+        }
+    }
+}
+
+main();
 // =============================================================================
 
 
